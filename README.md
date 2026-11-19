@@ -1,51 +1,93 @@
+<div align="center">
+
 # nonebot-plugin-imitate
 
-让机器人学会群友说话——但默认**完全关闭**。
+_✨ 随机复读 + 2 阶 Markov 群聊模仿 ✨_
 
-## 三种模式
+[![LICENSE](https://img.shields.io/github/license/MortisBot/nonebot-plugin-imitate.svg)](./LICENSE)
+[![pypi](https://img.shields.io/pypi/v/nonebot-plugin-imitate.svg)](https://pypi.python.org/pypi/nonebot-plugin-imitate)
+![python](https://img.shields.io/badge/python-3.10+-blue.svg)
 
-| `IMITATE_MODE` | 行为 |
-|:---:|:---|
-| `replay`（默认） | 从该用户最近的短消息里随机复读一条 |
-| `markov` | 用本群语料训练 2 阶字符级 Markov 链生成新句子 |
-| `mixed` | 语料够用时走 Markov，不够回退 replay |
+</div>
 
-> `replay` 的行为规格来自 koishi-plugin-imitate 2.0.6（MIT），是行为复刻而非代码拷贝。
+## 📖 介绍
 
-## 安装
+学习群消息并模仿：默认随机复读该用户的短消息，可切换为字符级 2 阶 Markov 生成。默认**完全关闭**、按群白名单生效，语料只存本地 SQLite。
+
+> `replay` 模式的行为规格来自 koishi-plugin-imitate 2.0.6（MIT），是行为复刻而非代码拷贝。
+
+## 💿 安装
+
+<details open>
+<summary>使用 nb-cli 安装</summary>
+
+在 NoneBot2 项目根目录下执行：
 
 ```bash
-nb plugin install nonebot-plugin-imitate
+nb plugin install nonebot-plugin-imitate --upgrade
 ```
 
-或手动 `pip install nonebot-plugin-imitate`，并在 `pyproject.toml` 中启用 `nonebot_plugin_imitate`。
+国内网络可换镜像源：
 
-## 配置（最小示例）
-
-```dotenv
-IMITATE_ENABLED=true
-IMITATE_MODE=replay
-IMITATE_GROUPS=123456789,987654321
-IMITATE_PROB=0.02
+```bash
+nb plugin install nonebot-plugin-imitate --upgrade -i "https://pypi.tuna.tsinghua.edu.cn/simple"
 ```
 
-| 变量 | 默认 | 说明 |
-|:---:|:---:|:---|
-| `IMITATE_ENABLED` | `false` | 总开关 |
-| `IMITATE_GROUPS` | 空 | 生效群；空 = 不生效 |
-| `IMITATE_PROB` | `0.02` | replay 自动触发概率 |
-| `IMITATE_MAX_RECORDS` | `100` | 每人保留语料条数 |
-| `IMITATE_MIN_CORPUS` | `500` | markov 开始生成的最小语料量 |
-| `IMITATE_DB_PATH` | `data/imitate/imitate.db` | 本地 SQLite |
+</details>
 
-## 指令
+<details>
+<summary>使用包管理器安装</summary>
 
-- `模仿`
-- `模仿 @某人`
-- `模仿 <QQ号>`
+在 NoneBot2 项目根目录下执行其一：
 
-语料只写入本地 SQLite；删除 `IMITATE_DB_PATH` 即可清空。
+```bash
+uv add nonebot-plugin-imitate
+# 或
+pdm add nonebot-plugin-imitate
+# 或
+poetry add nonebot-plugin-imitate
+```
 
-## License
+直接装仓库主分支（PyPI 包发布前可用）：
 
-[MIT](./LICENSE) · 维护模式（best-effort）
+```bash
+uv add git+https://github.com/MortisBot/nonebot-plugin-imitate@main
+```
+
+然后在 `pyproject.toml` 的 `[tool.nonebot]` 中追加：
+
+```toml
+plugins = ["nonebot_plugin_imitate"]
+```
+
+</details>
+
+## ⚙️ 配置
+
+在 NoneBot2 项目的 `.env` 中配置（配置项即环境变量名，大写）：
+
+| 配置项 | 必填 | 默认值 | 说明 |
+|:---:|:---:|:---:|:---|
+| `IMITATE_ENABLED` | 是 | `false` | 总开关 |
+| `IMITATE_MODE` | 否 | `replay` | `replay` / `markov` / `mixed` |
+| `IMITATE_GROUPS` | 是 | 空 | 生效群号，逗号分隔（空 = 不生效） |
+| `IMITATE_PROB` | 否 | `0.02` | replay 自动触发概率 |
+| `IMITATE_MAX_RECORDS` | 否 | `100` | 每人保留语料条数 |
+| `IMITATE_MIN_CORPUS` | 否 | `500` | markov 开始生成的最小语料量 |
+| `IMITATE_DB_PATH` | 否 | `data/imitate/imitate.db` | 本地 SQLite 路径 |
+
+## 🎉 使用
+
+| 命令 | 权限 | 需要 @ | 范围 | 说明 |
+|:---:|:---:|:---:|:---:|:---|
+| `模仿` | 群员 | 否 | 群聊 | 随机复读一条该用户的短消息 |
+| `模仿 @某人` | 群员 | 否 | 群聊 | 复读指定用户 |
+| `模仿 <QQ号>` | 群员 | 否 | 群聊 | 同上 |
+
+## 🔌 适配器
+
+OneBot v11（`supported_adapters={"~onebot.v11"}`）。语料仅写入本地 SQLite；删除 `IMITATE_DB_PATH` 即可清空。
+
+## 📄 License
+
+[MIT](./LICENSE) · 维护模式（best-effort，无 SLA）
