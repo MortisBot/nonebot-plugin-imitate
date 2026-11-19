@@ -83,9 +83,10 @@ def _is_ignored_user(event: MessageEvent, bot: Bot) -> bool:
 def _cooldown_ok(group_id: int) -> bool:
     if CFG.cooldown_seconds <= 0:
         return True
-    now = time.monotonic()
-    last = _last_sent.get(group_id, 0.0)
-    return now - last >= CFG.cooldown_seconds
+    last = _last_sent.get(group_id)
+    if last is None:  # 从未发过：立即放行（不依赖 monotonic 的起点）
+        return True
+    return time.monotonic() - last >= CFG.cooldown_seconds
 
 
 def _rule_auto(event: MessageEvent, bot: Bot) -> bool:

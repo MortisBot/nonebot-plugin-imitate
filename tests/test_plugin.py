@@ -258,3 +258,14 @@ def test_cooldown(monkeypatch, patched):
         plugin._last_sent.clear()
     _set_cfg(monkeypatch, patched, cooldown_seconds=0)
     assert plugin._cooldown_ok(GROUP) is True
+
+
+def test_cooldown_on_fresh_boot(monkeypatch, patched):
+    """monotonic() 的起点不可控：刚启动的机器上 now < cooldown 时不应误判为冷却中。"""
+    _set_cfg(monkeypatch, patched, cooldown_seconds=60)
+    plugin._last_sent.clear()
+    monkeypatch.setattr(plugin.time, "monotonic", lambda: 3.0)
+    try:
+        assert plugin._cooldown_ok(GROUP) is True
+    finally:
+        plugin._last_sent.clear()
