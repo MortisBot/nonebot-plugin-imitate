@@ -38,6 +38,7 @@ __plugin_meta__ = PluginMetadata(
     ),
     usage="模仿\n模仿 <uid>\n模仿 @某人",
     type="application",
+    homepage="https://github.com/MortisBot/nonebot-plugin-imitate",
     supported_adapters={"~onebot.v11"},
 )
 
